@@ -9,7 +9,7 @@ import (
 
     "github.com/gorilla/mux"
 )
- 
+
 func homePage(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Welcome to the Pokete-API!")
     fmt.Println("Endpoint Hit: homePage")
@@ -18,33 +18,24 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 func handleRequests() {
     myRouter := mux.NewRouter().StrictSlash(true)
     myRouter.HandleFunc("/", homePage)
-    myRouter.HandleFunc("/poketes", returnAllPokes)
-    myRouter.HandleFunc("/attacks", returnAllAttacks)
-    myRouter.HandleFunc("/poketes/{name}", returnSinglePoke)
-    myRouter.HandleFunc("/attacks/{name}", returnSingleAttack)
+    myRouter.HandleFunc("/poketes", PoketeData{"pokes"}.returnJson)
+    myRouter.HandleFunc("/attacks", PoketeData{"attacks"}.returnJson)
+    myRouter.HandleFunc("/types", PoketeData{"types"}.returnJson)
+    myRouter.HandleFunc("/poketes/{name}", PoketeData{"pokes"}.returnJson)
+    myRouter.HandleFunc("/attacks/{name}", PoketeData{"attacks"}.returnJson)
+    myRouter.HandleFunc("/types/{name}", PoketeData{"types"}.returnJson)
     log.Fatal(http.ListenAndServe(":8000", myRouter))
 }
 
-func returnSinglePoke(w http.ResponseWriter, r *http.Request){
-    returnAllJson(w, "pokes", mux.Vars(r)["name"])
+type PoketeData struct {
+    name string
 }
 
-func returnSingleAttack(w http.ResponseWriter, r *http.Request){
-    returnAllJson(w, "attacks", mux.Vars(r)["name"])
-}
-
-func returnAllPokes(w http.ResponseWriter, r *http.Request){
-    returnAllJson(w, "pokes", "")
-}
-
-func returnAllAttacks(w http.ResponseWriter, r *http.Request){
-    returnAllJson(w, "attacks", "")
-}
-
-func returnAllJson(w http.ResponseWriter, name string, key string) {
-    fmt.Println("Endpoint Hit: returnAllJson", name, key)
-    data, _ := exec.Command("./get_json.py", name).Output()
-    if key == "" {
+func (self PoketeData)returnJson(w http.ResponseWriter, r *http.Request) {
+    fmt.Println("Endpoint Hit: returnJson", self.name)
+    data, _ := exec.Command("./get_json.py", self.name).Output()
+    key, exists := mux.Vars(r)["name"] 
+    if ! exists {
         fmt.Fprintf(w, "%s", data)
     } else {
 	var result map[string]interface{}
