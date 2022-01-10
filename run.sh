@@ -9,7 +9,8 @@ show_help() {
 Usage: $0 [ARG1] [ARG2] ...
 Options:
 	--no-download\t: Does not download the data
-	--update\t: Just downloads the data"
+	--update\t: Just downloads the data
+	--help\t\t: Shows this dialog"
 }
 
 for i in $@
@@ -21,7 +22,7 @@ do
 	"--update")
 	    do_start=false
 	    ;;
-	*)
+	"--help" | *)
 	    show_help
 	    exit
 	    ;;
