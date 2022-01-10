@@ -9,7 +9,7 @@ from pokete_types import types
 del pokes["__fallback__"]
 
 match sys.argv[1]:
-    case "pokes":
+    case "poketes":
         print(json.dumps(pokes))
     case "attacks":
         print(json.dumps(attacks))

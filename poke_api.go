@@ -10,6 +10,15 @@ import (
     "github.com/gorilla/mux"
 )
 
+func itemInList(item string, list []string) bool {
+    for _, i := range list {
+	if i == item {
+	    return true
+	}
+    }
+    return false
+}
+
 func homePage(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Welcome to the Pokete-API!")
     fmt.Println("Endpoint Hit: homePage")
@@ -18,29 +27,36 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 func handleRequests() {
     myRouter := mux.NewRouter().StrictSlash(true)
     myRouter.HandleFunc("/", homePage)
-    myRouter.HandleFunc("/poketes", PoketeData{"pokes"}.returnJson)
-    myRouter.HandleFunc("/attacks", PoketeData{"attacks"}.returnJson)
-    myRouter.HandleFunc("/types", PoketeData{"types"}.returnJson)
-    myRouter.HandleFunc("/poketes/{name}", PoketeData{"pokes"}.returnJson)
-    myRouter.HandleFunc("/attacks/{name}", PoketeData{"attacks"}.returnJson)
-    myRouter.HandleFunc("/types/{name}", PoketeData{"types"}.returnJson)
+    myRouter.HandleFunc("/{cat}", returnJson)
+    myRouter.HandleFunc("/{cat}/{name}", returnJson)
     log.Fatal(http.ListenAndServe(":8000", myRouter))
 }
 
-type PoketeData struct {
-    name string
+func handleNotFound(w http.ResponseWriter){
+    w.WriteHeader(http.StatusNotFound)
+    fmt.Fprintf(w, "Error 404 - Page not found") 
 }
 
-func (self PoketeData)returnJson(w http.ResponseWriter, r *http.Request) {
-    fmt.Println("Endpoint Hit: returnJson", self.name)
-    data, _ := exec.Command("./get_json.py", self.name).Output()
+func returnJson(w http.ResponseWriter, r *http.Request) {
+    cat, _ := mux.Vars(r)["cat"]
+    if ! itemInList(cat, []string{"types", "poketes", "attacks"}) {
+	handleNotFound(w)
+	return
+    }
+    fmt.Println("Endpoint Hit: returnJson", cat)
+    data, _ := exec.Command("./get_json.py", cat).Output()
     key, exists := mux.Vars(r)["name"] 
     if ! exists {
         fmt.Fprintf(w, "%s", data)
     } else {
-	var result map[string]interface{}
-	json.Unmarshal([]byte(data), &result)
-	res, _ := json.Marshal(result[key])
+	var rawData map[string]interface{}
+	json.Unmarshal([]byte(data), &rawData)
+	item, item_exists := rawData[key]
+	if ! item_exists {
+	    handleNotFound(w)
+	    return
+	}
+	res, _ := json.Marshal(item)
 	fmt.Fprintf(w, "%s", res)
     }
 }
