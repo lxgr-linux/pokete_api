@@ -1,8 +1,40 @@
-echo ":: Downloading..."
-for file in poketes attacks
+#!/usr/bin/sh
+
+download=true
+do_start=true
+
+show_help() {
+    # Shows help dialog
+    echo -e "Downloads data and starts server
+Usage: $0 [ARG1] [ARG2] ...
+Options:
+	--no-download\t: Does not download the data
+	--update\t: Just downloads the data"
+}
+
+for i in $@
 do
-	echo " -> $file.py"
-	curl https://raw.githubusercontent.com/lxgr-linux/pokete/master/pokete_data/${file}.py > ./${file}.py
+    case $i in 
+	"--no-download")
+	    download=false
+	    ;;
+	"--update")
+	    do_start=false
+	    ;;
+	*)
+	    show_help
+	    exit
+	    ;;
+    esac
 done
-echo ":: Stating..."
-go run poke_api.go
+
+if [[ $download = true ]]
+then
+    . ./download.sh
+fi
+
+if [[ $do_start = true ]]
+then
+    echo ":: Starting..."
+    go run poke_api.go
+fi
