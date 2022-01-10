@@ -21,7 +21,7 @@ func itemInList(item string, list []string) bool {
 
 func homePage(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, "Welcome to the Pokete-API!")
-    fmt.Println("Endpoint Hit: homePage")
+    log.Println("Endpoint Hit: homePage")
 }
  
 func handleRequests() {
@@ -43,8 +43,13 @@ func returnJson(w http.ResponseWriter, r *http.Request) {
 	handleNotFound(w)
 	return
     }
-    fmt.Println("Endpoint Hit: returnJson", cat)
-    data, _ := exec.Command("./get_json.py", cat).Output()
+    log.Println("Endpoint Hit: returnJson", cat)
+    data, err := exec.Command("./get_json.py", cat).Output()
+    if err != nil {
+	log.Printf("Error in get_json: %s", err)
+	handleNotFound(w)
+	return
+    }
     key, exists := mux.Vars(r)["name"] 
     if ! exists {
         fmt.Fprintf(w, "%s", data)
