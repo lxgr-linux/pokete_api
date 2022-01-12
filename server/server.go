@@ -24,22 +24,25 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("Endpoint Hit: homePage")
 }
 
-type server struct {
+// Server that configures the webservers behaviour
+type Server struct {
 	port string
 }
 
-func NewServer(port string) server {
-	return server{port}
+// NewServer contructs a server object that configures the webservers behaviour
+func NewServer(port string) Server {
+	return Server{port}
 }
 
-func (self server) HandleRequests() {
-	log.Println("Starting server on port", self.port)
+// HandleRequests handles requests
+func (s Server) HandleRequests() {
+	log.Println("Starting server on port", s.port)
 	fmt.Println(":: Starting server...")
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/{cat}", returnJSON)
 	myRouter.HandleFunc("/{cat}/{name}", returnJSON)
-	log.Fatal(http.ListenAndServe(":"+self.port, myRouter))
+	log.Fatal(http.ListenAndServe(":"+s.port, myRouter))
 }
 
 func handleNotFound(w http.ResponseWriter) {
