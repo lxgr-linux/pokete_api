@@ -1,24 +1,25 @@
 # Pokete API
 
-An API to get (Pokete, Attack etc.) data from [Pokete](https://github.com/lxgr-linux/pokete).
+An rest API to get (Pokete, Attack etc.) data from [Pokete](https://github.com/lxgr-linux/pokete).
+
+## Building
+```shell
+go build
+```
 
 ## Usage
 To lauch the server:
 ```shell
-./run.sh
+./pokete_api
 ```
 
-To not download data files:
-```shell
-./run.sh --no-download
+Extended usage:
 ```
-
-To just update the data files without running the server:
-```shell
-./run.sh --update
-```
-
-To show usage information
-```shell
-./run.sh --help
+Downloads data and starts server
+Usage: ./pokete_api [ARG1] [ARG2] ...
+Options:
+	--no-download    : Does not download the data
+	--update         : Just downloads the data
+	--port <port>    : The port the server will run on, default is 8000
+	--help           : Shows this dialog
 ```
