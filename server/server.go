@@ -33,7 +33,8 @@ func NewServer(port string) server {
 }
 
 func (self server) HandleRequests() {
-	log.Println("Starting server")
+	log.Println("Starting server on port", self.port)
+	fmt.Println(":: Starting server...")
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/{cat}", returnJSON)

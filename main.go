@@ -12,8 +12,10 @@ import (
 )
 
 func download() error {
+	fmt.Println(":: Downloading...")
 	for _, i := range []string{"poketes", "attacks", "types"} {
 		log.Println("Downloading", i)
+		fmt.Println(" ->", i)
 		res, err := http.Get("https://raw.githubusercontent.com/lxgr-linux/pokete/master/pokete_data/" + i + ".py")
 		defer res.Body.Close()
 		if err != nil {
@@ -73,6 +75,14 @@ func main() {
 			}
 		}
 	}
+
+	file, err := os.OpenFile("log.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.SetOutput(file)
+	defer file.Close()
+
 	if doDownload {
 		err := download()
 		if err != nil {
