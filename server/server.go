@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"encoding/json"
@@ -24,12 +24,20 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	log.Println("Endpoint Hit: homePage")
 }
 
-func handleRequests() {
+type server struct {
+	port string
+}
+
+func NewServer(port string) server {
+	return server{port}
+}
+
+func (self server) HandleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/{cat}", returnJSON)
 	myRouter.HandleFunc("/{cat}/{name}", returnJSON)
-	log.Fatal(http.ListenAndServe(":8000", myRouter))
+	log.Fatal(http.ListenAndServe(":"+self.port, myRouter))
 }
 
 func handleNotFound(w http.ResponseWriter) {
@@ -64,8 +72,4 @@ func returnJSON(w http.ResponseWriter, r *http.Request) {
 		res, _ := json.Marshal(item)
 		fmt.Fprintf(w, "%s", res)
 	}
-}
-
-func main() {
-	handleRequests()
 }

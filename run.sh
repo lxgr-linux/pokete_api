@@ -37,5 +37,5 @@ fi
 if [[ $do_start = true ]]
 then
     echo ":: Starting..."
-    go run poke_api.go
+    go run server.go
 fi
