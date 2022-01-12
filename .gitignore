@@ -1,4 +1,5 @@
 __pycache__
 pokete_*
-
+*.log
+pokete_api
 .idea
