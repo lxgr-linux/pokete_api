@@ -33,6 +33,7 @@ func NewServer(port string) server {
 }
 
 func (self server) HandleRequests() {
+	log.Println("Starting server")
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage)
 	myRouter.HandleFunc("/{cat}", returnJSON)
@@ -54,9 +55,7 @@ func returnJSON(w http.ResponseWriter, r *http.Request) {
 	log.Println("Endpoint Hit: returnJson", cat)
 	data, err := exec.Command("./get_json.py", cat).Output()
 	if err != nil {
-		log.Printf("Error in get_json: %s", err)
-		handleNotFound(w)
-		return
+		log.Fatal("Error in get_json: ", err)
 	}
 	key, exists := mux.Vars(r)["name"]
 	if !exists {

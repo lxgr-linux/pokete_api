@@ -80,7 +80,6 @@ func main() {
 		}
 	}
 	if startServer {
-		fmt.Println(":: Starting...")
 		server.NewServer(port).HandleRequests()
 	}
 }
