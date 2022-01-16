@@ -23,3 +23,20 @@ Options:
 	--port <port>    : The port the server will run on, default is 8000
 	--help           : Shows this dialog
 ```
+
+## Accessing data
+The API provides access to Poketes, types and attacks. They can be reached via:
+
+```
+host:port/cathegory/subcathegory
+```
+
+So for example to get data about all Poketes on your localhost and the standart port:
+```
+localhost:8000/poketes
+```
+
+To just see data about `steini`:
+```
+localhost:8000/poketes/steini
+```
